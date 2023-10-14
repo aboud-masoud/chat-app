@@ -11,7 +11,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<Chat> myList = [Chat(fromMe: false, message: "test 1"), Chat(fromMe: false, message: "test 2")];
+  List<Chat> myList = [];
 
   @override
   Widget build(BuildContext context) {
@@ -36,12 +36,18 @@ class _HomeScreenState extends State<HomeScreen> {
                           ? Row(
                               children: [
                                 Expanded(child: Container()),
-                                MessageView(text: myList[index].message),
+                                MessageView(
+                                  text: myList[index].message,
+                                  date: myList[index].date,
+                                ),
                               ],
                             )
                           : Row(
                               children: [
-                                MessageView(text: myList[index].message),
+                                MessageView(
+                                  text: myList[index].message,
+                                  date: myList[index].date,
+                                ),
                                 Expanded(child: Container()),
                               ],
                             ),
@@ -50,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             SendMessageView(
               onSend: (message) {
-                myList.add(Chat(fromMe: true, message: message));
+                myList.add(Chat(fromMe: true, message: message, date: DateTime.now().toString()));
                 setState(() {});
               },
             ),
