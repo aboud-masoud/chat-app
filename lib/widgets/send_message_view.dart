@@ -15,25 +15,20 @@ class SendMessageView extends StatelessWidget {
         children: [
           const SizedBox(width: 8),
           Expanded(
-              child: TextField(
-            controller: messageController,
-            decoration: const InputDecoration(
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.white, width: 1),
+            child: TextField(
+              controller: messageController,
+              decoration: const InputDecoration(
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white, width: 1),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white, width: 1),
+                ),
+                border: OutlineInputBorder(),
               ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.white, width: 1),
-              ),
-              border: OutlineInputBorder(),
-            ),
-          )),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              width: 1,
-              color: Colors.white,
             ),
           ),
+          const SizedBox(width: 8),
           IconButton(
             onPressed: () {
               if (messageController.text.isNotEmpty) {
