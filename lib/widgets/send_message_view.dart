@@ -40,6 +40,7 @@ class SendMessageView extends StatelessWidget {
                 onSend(messageController.text);
                 messageController.text = "";
               }
+              FocusManager.instance.primaryFocus?.unfocus();
             },
             icon: const Icon(
               Icons.send,
