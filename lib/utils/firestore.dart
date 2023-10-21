@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class FirebaseFireStore {
   late CollectionReference collectioName;
 
-  Future<void> initialize() async {
+  void initialize() async {
     collectioName = FirebaseFirestore.instance.collection("chat-me-sara");
   }
 

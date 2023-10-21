@@ -1,6 +1,7 @@
-import 'package:chat_app/models/chat.dart';
+import 'package:chat_app/utils/firestore.dart';
 import 'package:chat_app/widgets/message_view.dart';
 import 'package:chat_app/widgets/send_message_view.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -11,7 +12,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<Chat> myList = [];
+  final instance = FirebaseFireStore();
+
+  @override
+  void initState() {
+    instance.initialize();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,37 +52,48 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 children: [
                   Expanded(
-                    child: ListView.builder(
-                        itemCount: myList.length,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: myList[index].fromMe
-                                ? Row(
-                                    children: [
-                                      Expanded(child: Container()),
-                                      MessageView(
-                                        text: myList[index].message,
-                                        date: myList[index].date,
-                                      ),
-                                    ],
-                                  )
-                                : Row(
-                                    children: [
-                                      MessageView(
-                                        text: myList[index].message,
-                                        date: myList[index].date,
-                                      ),
-                                      Expanded(child: Container()),
-                                    ],
-                                  ),
-                          );
+                    child: StreamBuilder(
+                        stream: instance.read(),
+                        builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
+                          final myList = streamSnapshot.data!.docs;
+
+                          myList.sort((a, b) => a["date"].compareTo(b["date"]));
+
+                          return ListView.builder(
+                              itemCount: myList.length,
+                              itemBuilder: (context, index) {
+                                print("myList[index] ${myList[index]["fromMe"]}");
+                                return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: myList[index]["fromMe"]
+                                      ? Row(
+                                          children: [
+                                            Expanded(child: Container()),
+                                            MessageView(
+                                              text: myList[index]["message"],
+                                              date: myList[index]["date"],
+                                            ),
+                                          ],
+                                        )
+                                      : Row(
+                                          children: [
+                                            MessageView(
+                                              text: myList[index]["message"],
+                                              date: myList[index]["date"],
+                                            ),
+                                            Expanded(child: Container()),
+                                          ],
+                                        ),
+                                );
+                              });
                         }),
                   ),
                   SendMessageView(
                     onSend: (message) {
-                      myList.add(Chat(fromMe: true, message: message, date: DateTime.now().toString()));
-                      setState(() {});
+                      instance.write(
+                          {"message": message, "date": DateTime.now().toString(), "fromMe": true}).whenComplete(() {
+                        setState(() {});
+                      });
                     },
                   ),
                 ],
